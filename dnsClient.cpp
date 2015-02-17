@@ -1,4 +1,4 @@
-//note that this code relies on c++11 features, and thus must be
+//note that this code relies on c++11 features, and thus must be test
 //compiled with the -std=c++11 flag when using g++
 
 #include <iostream>
