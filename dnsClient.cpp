@@ -1,4 +1,4 @@
-//note that this code relies on c++11 features, and thus must be test
+//note that this code relies on c++11 features, and thus must be
 //compiled with the -std=c++11 flag when using g++
 
 #include <iostream>
@@ -51,6 +51,7 @@ string openFile()
 
 int main(int argc, char** argv){
 
+  //socklen_t i;
   int sockfd = socket(AF_INET,SOCK_DGRAM,0);
   if(sockfd<0){
     cout<<"There was an error creating the socket"<<endl;
@@ -67,7 +68,7 @@ int main(int argc, char** argv){
   to.tv_usec=0;
   setsockopt(sockfd,SOL_SOCKET,SO_RCVTIMEO,&to,sizeof(to));
 
-  cout <<"Enter an IP address: ";
+  cout <<"Enter Domain name: ";
 
   string ipAddress;
 
@@ -116,8 +117,18 @@ int main(int argc, char** argv){
   buf[pos++]=TYPE_A;
   buf[pos++]=0;
   buf[pos++]=CLASS_IN;
+  
+
   sendto(sockfd,buf,pos,0,
    (struct sockaddr*)&serveraddr,sizeof(struct sockaddr_in));
-  cout<<"Sent our query"<<endl;
+  cout<<"Sent our query."<<endl;
+  recvfrom(sockfd,(char*) buf, pos, 0, (struct sockaddr*)&serveraddr, (socklen_t *)sizeof(struct sockaddr_in));
+  cout << "Received the response!" << endl;
+  
+  
+  d = *(struct dnsheader*) buf;
+  cout << "The response contains: " <<endl;
+  cout << ntohs(d.qcount) << " questions, " << ntohs(d.ancount) << " answers, "
+  	<< ntohs(d.nscount) <<" servers and " << ntohs(d.arcount) << " additional records." << endl; 
   return 0;
 }
