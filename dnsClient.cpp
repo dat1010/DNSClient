@@ -64,9 +64,13 @@ int main(int argc, char** argv){
   serveraddr.sin_addr.s_addr=inet_addr("8.8.8.8");
 
   struct timeval to;
-  to.tv_sec=5;
+  to.tv_sec=2;
   to.tv_usec=0;
-  setsockopt(sockfd,SOL_SOCKET,SO_RCVTIMEO,&to,sizeof(to));
+  if (setsockopt(sockfd,SOL_SOCKET,SO_RCVTIMEO,&to,sizeof(to)) < 0)
+  {
+	cerr << "TIMEOUT\n";
+	return 0;
+  }
 
   cout <<"Enter Domain name: ";
 
@@ -123,6 +127,12 @@ int main(int argc, char** argv){
    (struct sockaddr*)&serveraddr,sizeof(struct sockaddr_in));
   cout<<"Sent our query."<<endl;
   recvfrom(sockfd,(char*) buf, pos, 0, (struct sockaddr*)&serveraddr, (socklen_t *)sizeof(struct sockaddr_in));
+  
+  if( errno == EAGAIN)
+  {
+	  cout << "TIMEOUT: errno EAGAIN\n";
+  }
+  
   cout << "Received the response!" << endl;
   
   
